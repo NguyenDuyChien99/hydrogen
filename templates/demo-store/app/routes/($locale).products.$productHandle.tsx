@@ -71,9 +71,9 @@ export async function loader({params, request, context}: LoaderArgs) {
     throw new Response('product', {status: 404});
   }
 
-  if (!product.selectedVariant) {
-    return redirectToFirstVariant({product, request});
-  }
+  // if (!product.selectedVariant) {
+  //   return redirectToFirstVariant({product, request});
+  // }
 
   const recommended = getRecommendedProducts(context.storefront, product.id);
   const firstVariant = product.variants.nodes[0];
@@ -471,58 +471,97 @@ const PRODUCT_VARIANT_FRAGMENT = `#graphql
 `;
 
 const PRODUCT_QUERY = `#graphql
-  query Product(
-    $country: CountryCode
-    $language: LanguageCode
+  query ProductDetail1(
     $handle: String!
-    $selectedOptions: [SelectedOptionInput!]!
-  ) @inContext(country: $country, language: $language) {
-    product(handle: $handle) {
-      id
-      title
-      vendor
-      handle
-      descriptionHtml
-      description
-      options {
-        name
-        values
+  ) {
+  product(handle: $handle) {
+    id
+    title
+    vendor
+    handle
+    descriptionHtml
+    description
+    options {
+      name
+      values
+    }
+    media(first: 7) {
+      nodes {
+        ...Media
       }
-      selectedVariant: variantBySelectedOptions(selectedOptions: $selectedOptions) {
+    }
+    variants(first: 1) {
+      nodes {
         ...ProductVariantFragment
       }
-      media(first: 7) {
-        nodes {
-          ...Media
-        }
-      }
-      variants(first: 1) {
-        nodes {
-          ...ProductVariantFragment
-        }
-      }
-      seo {
-        description
-        title
-      }
     }
-    shop {
-      name
-      primaryDomain {
-        url
-      }
-      shippingPolicy {
-        body
-        handle
-      }
-      refundPolicy {
-        body
-        handle
-      }
+    seo {
+      description
+      title
     }
   }
-  ${MEDIA_FRAGMENT}
-  ${PRODUCT_VARIANT_FRAGMENT}
+  shop {
+    name
+    primaryDomain {
+      url
+    }
+    shippingPolicy {
+      body
+      handle
+    }
+    refundPolicy {
+      body
+      handle
+    }
+  }
+  }
+
+  fragment Media on MediaImage {
+  alt,
+  id,
+  image {
+    width,
+    height,
+    id,
+    url
+  },
+  mediaContentType,
+  previewImage {
+    url
+  }
+  }
+
+  fragment ProductVariantFragment on Variant {
+  id,
+  availableForSale,
+  image {
+    altText,
+    height,
+    width
+  },
+  price {
+    amount,
+    currencyCode
+  },
+  compareAtPrice {
+    amount,
+    currencyCode
+  },
+  selectedOptions {
+    name,
+    value
+  },
+  product {
+    handle,
+    title
+  }, 
+  sku,
+  title,
+  unitPrice {
+    amount,
+    currencyCode
+  }
+  }
 ` as const;
 
 const VARIANTS_QUERY = `#graphql

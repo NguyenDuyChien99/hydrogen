@@ -338,8 +338,14 @@ export function createStorefrontClient<TI18n extends I18nBase>(
     const isHomepageFeaturedProducts = query.includes(
       'query homepageFeaturedProducts',
     );
+    const isProductDetailQuery = query.includes('query ProductDetail1');
 
-    if (isLayoutQuery || isSearchQuery || isHomepageFeaturedProducts) {
+    if (
+      isLayoutQuery ||
+      isSearchQuery ||
+      isHomepageFeaturedProducts ||
+      isProductDetailQuery
+    ) {
       const myGraphql = convertToGraphql(query, variables);
       return myGraphql as T;
     } else {
