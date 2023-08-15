@@ -342,13 +342,17 @@ export function createStorefrontClient<TI18n extends I18nBase>(
     const isRelatedProductsQuery = query.includes(
       'query productRecommendations',
     );
+    const isCollectionsQuery = query.includes('query Collections');
+    const isCollectionDetailQuery = query.includes('query CollectionDetails');
 
     if (
       isLayoutQuery ||
       isSearchQuery ||
       isHomepageFeaturedProducts ||
       isProductDetailQuery ||
-      isRelatedProductsQuery
+      isRelatedProductsQuery ||
+      isCollectionsQuery ||
+      isCollectionDetailQuery
     ) {
       const myGraphql = convertToGraphql(query, variables);
       return myGraphql as T;
