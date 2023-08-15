@@ -190,75 +190,92 @@ export default function Collection() {
 }
 
 const COLLECTION_QUERY = `#graphql
-  query CollectionDetails(
-    $handle: String!
-    $country: CountryCode
-    $language: LanguageCode
-    $filters: [ProductFilter!]
-    $sortKey: ProductCollectionSortKeys!
-    $reverse: Boolean
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collection(handle: $handle) {
-      id
-      handle
-      title
+query CollectionDetails(
+  $handle: String!
+) {
+  collection(handle: $handle) {
+    id
+    handle
+    title
+    description
+    seo {
       description
-      seo {
-        description
-        title
-      }
-      image {
+      title
+    }
+    image {
+      id
+      url
+      width
+      height
+      altText
+    }
+    products {
+      filters {
         id
-        url
-        width
-        height
-        altText
-      }
-      products(
-        first: $first,
-        last: $last,
-        before: $startCursor,
-        after: $endCursor,
-        filters: $filters,
-        sortKey: $sortKey,
-        reverse: $reverse
-      ) {
-        filters {
+        label
+        type
+        values {
           id
           label
-          type
-          values {
-            id
-            label
-            count
-            input
-          }
-        }
-        nodes {
-          ...ProductCard
-        }
-        pageInfo {
-          hasPreviousPage
-          hasNextPage
-          hasNextPage
-          endCursor
+          count
+          input
         }
       }
-    }
-    collections(first: 100) {
-      edges {
-        node {
-          title
-          handle
-        }
+      nodes {
+        ...ProductCard
+      }
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        hasNextPage
+        endCursor
       }
     }
   }
-  ${PRODUCT_CARD_FRAGMENT}
+  collections {
+    edges {
+      node {
+        title
+        handle
+      }
+    }
+  }
+}
+fragment ProductCard on CollectionProduct {
+  id
+  title
+  publishedAt
+  handle
+  vendor
+  variants {
+    nodes {
+      id
+      availableForSale
+      image {
+        url
+        altText
+        width
+        height
+      }
+      price {
+        amount
+        currencyCode
+      }
+      compareAtPrice {
+        amount
+        currencyCode
+      }
+      selectedOptions {
+        name
+        value
+      }
+      product {
+        handle
+        title
+      }
+    }
+  }
+}
 ` as const;
 
 function getSortValuesFromParam(sortParam: SortParam | null): {

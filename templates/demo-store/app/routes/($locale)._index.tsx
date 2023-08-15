@@ -87,10 +87,48 @@ export default function Homepage() {
   // TODO: skeletons vs placeholders
   const skeletons = getHeroPlaceholder([{}, {}, {}]);
 
+  // https://product.hstatic.net/1000376021/product/gw4054_0_8fd6d09763ae49948623e7b2867c3512_c0bf9ab356ea421fa78f3461536ffe03_master.jpg
+  // https://product.hstatic.net/1000376021/product/u35c2a_c1000_0_00441e1a0c8c4af29b74f63a81a06442_master.jpg
+  const newPrimaryHero = {
+    ...primaryHero,
+    byline: {
+      value: '',
+    },
+    heading: {
+      value: '',
+    },
+    cta: {
+      value: 'View Collection Now →',
+    },
+    spread: {
+      reference: {
+        ...primaryHero.spread.reference,
+        image: {
+          height: 3155,
+          id: 'gid://shopify/ImageSource/29262559281208',
+          url: 'https://lh3.googleusercontent.com/hPl434Lk78Iuv7ujyu3RrLk4n1UuRgLW8qj-tLcM9Vh3NHes397KjTAr_DZvj-ubCw2g4BtLATxLQ3lu0fJdk3_OPZgO2qPZ=w500-rw',
+          width: 2500,
+        },
+      },
+    },
+    spreadSecondary: {
+      reference: {
+        ...primaryHero.spreadSecondary.reference,
+        image: {
+          height: 3155,
+          id: 'gid://shopify/ImageSource/29262559281208',
+          url: 'https://product.hstatic.net/1000376021/product/gw4054_2_7d83b72901f64e04b18d54a82949fea2_5431510e666d43edabc7704154a0c627_master.jpg',
+          width: 2500,
+        },
+      },
+    },
+    handle: '%2Fc%2Fadidas',
+  };
+
   return (
     <>
-      {primaryHero && (
-        <Hero {...primaryHero} height="full" top loading="eager" />
+      {newPrimaryHero && (
+        <Hero {...newPrimaryHero} height="full" top loading="eager" />
       )}
 
       {featuredProducts && (

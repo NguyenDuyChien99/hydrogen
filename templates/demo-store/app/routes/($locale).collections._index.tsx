@@ -52,7 +52,7 @@ export default function Collections() {
                 {nodes.map((collection, i) => (
                   <CollectionCard
                     collection={collection as Collection}
-                    key={collection.id}
+                    key={(collection as any)?.id as string}
                     loading={getImageLoadingPriority(i, 2)}
                   />
                 ))}
@@ -86,6 +86,9 @@ function CollectionCard({
             aspectRatio="6/4"
             sizes="(max-width: 32em) 100vw, 45vw"
             loading={loading}
+            style={{
+              backgroundColor: 'white',
+            }}
           />
         )}
       </div>
@@ -97,15 +100,8 @@ function CollectionCard({
 }
 
 const COLLECTIONS_QUERY = `#graphql
-  query Collections(
-    $country: CountryCode
-    $language: LanguageCode
-    $first: Int
-    $last: Int
-    $startCursor: String
-    $endCursor: String
-  ) @inContext(country: $country, language: $language) {
-    collections(first: $first, last: $last, before: $startCursor, after: $endCursor) {
+  query Collections {
+    collections {
       nodes {
         id
         title
