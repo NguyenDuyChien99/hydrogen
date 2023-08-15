@@ -196,7 +196,10 @@ export default function Product() {
           resolve={recommended}
         >
           {(products) => (
-            <ProductSwimlane title="Related Products" products={products} />
+            <ProductSwimlane
+              title="Related Products"
+              products={products as any}
+            />
           )}
         </Await>
       </Suspense>
@@ -583,18 +586,10 @@ const VARIANTS_QUERY = `#graphql
 
 const RECOMMENDED_PRODUCTS_QUERY = `#graphql
   query productRecommendations(
-    $productId: ID!
-    $count: Int
-    $country: CountryCode
-    $language: LanguageCode
-  ) @inContext(country: $country, language: $language) {
-    recommended: productRecommendations(productId: $productId) {
+    $productId: String!
+  )  {
+    recommended(handle: $productId) {
       ...ProductCard
-    }
-    additional: products(first: $count, sortKey: BEST_SELLING) {
-      nodes {
-        ...ProductCard
-      }
     }
   }
   ${PRODUCT_CARD_FRAGMENT}
@@ -610,18 +605,18 @@ async function getRecommendedProducts(
 
   invariant(products, 'No data returned from Shopify API');
 
-  const mergedProducts = (products.recommended ?? [])
-    .concat(products.additional.nodes)
-    .filter(
-      (value, index, array) =>
-        array.findIndex((value2) => value2.id === value.id) === index,
-    );
+  // const mergedProducts = (products.recommended ?? [])
+  //   .concat(products.additional.nodes)
+  //   .filter(
+  //     (value, index, array) =>
+  //       array.findIndex((value2) => value2.id === value.id) === index,
+  //   );
 
-  const originalProduct = mergedProducts.findIndex(
-    (item) => item.id === productId,
-  );
+  // const originalProduct = mergedProducts.findIndex(
+  //   (item) => item.id === productId,
+  // );
 
-  mergedProducts.splice(originalProduct, 1);
+  // mergedProducts.splice(originalProduct, 1);
 
-  return {nodes: mergedProducts};
+  return {nodes: products.recommended};
 }
